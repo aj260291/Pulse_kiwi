@@ -17,19 +17,28 @@ const globalForPg = globalThis as typeof globalThis & {
   __pulseArchivePool?: Pool;
 };
 
-export const pool =
-  globalForPg.__pulseArchivePool ??
-  new Pool({
-    connectionString,
-    ssl: usesRemoteDatabase
-      ? {
-          rejectUnauthorized: false,
-        }
-      : undefined,
-    max: 10,
-    idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 10_000,
-  });
+const poolConfig = usesRemoteDatabase
+  ? {
+      host: normalizedConnectionUrl.hostname,
+      port: Number(normalizedConnectionUrl.port || 5432),
+      user: decodeURIComponent(normalizedConnectionUrl.username),
+      password: decodeURIComponent(normalizedConnectionUrl.password),
+      database: normalizedConnectionUrl.pathname.replace(/^\//, ""),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      max: 10,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 10_000,
+    }
+  : {
+      connectionString,
+      max: 10,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 10_000,
+    };
+
+export const pool = globalForPg.__pulseArchivePool ?? new Pool(poolConfig);
 
 if (process.env.NODE_ENV !== "production") {
   globalForPg.__pulseArchivePool = pool;

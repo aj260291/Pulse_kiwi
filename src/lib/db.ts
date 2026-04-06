@@ -1,9 +1,11 @@
 import { Pool, type QueryResultRow } from "pg";
 
-const defaultConnectionString =
+const connectionString =
   process.env.DATABASE_URL ??
   process.env.POSTGRES_URL ??
   "postgresql://abhishekjha@localhost:5432/archive_csvs";
+
+const usesRemoteDatabase = !/(localhost|127\.0\.0\.1)/i.test(connectionString);
 
 const globalForPg = globalThis as typeof globalThis & {
   __pulseArchivePool?: Pool;
@@ -12,7 +14,12 @@ const globalForPg = globalThis as typeof globalThis & {
 export const pool =
   globalForPg.__pulseArchivePool ??
   new Pool({
-    connectionString: defaultConnectionString,
+    connectionString,
+    ssl: usesRemoteDatabase
+      ? {
+          rejectUnauthorized: false,
+        }
+      : undefined,
     max: 10,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,

@@ -2,6 +2,7 @@ import { Pool, type QueryResultRow } from "pg";
 
 const connectionString =
   process.env.DATABASE_URL ??
+  process.env.POSTGRES_URL_NON_POOLING ??
   process.env.POSTGRES_URL ??
   "postgresql://abhishekjha@localhost:5432/archive_csvs";
 

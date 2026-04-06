@@ -27,8 +27,8 @@ const poolConfig = usesRemoteDatabase
       ssl: {
         rejectUnauthorized: false,
       },
-      max: 10,
-      idleTimeoutMillis: 30_000,
+      max: 1,
+      idleTimeoutMillis: 5_000,
       connectionTimeoutMillis: 10_000,
     }
   : {

@@ -2,8 +2,8 @@ import { Pool, type QueryResultRow } from "pg";
 
 const rawConnectionString =
   process.env.DATABASE_URL ??
-  process.env.POSTGRES_URL_NON_POOLING ??
   process.env.POSTGRES_URL ??
+  process.env.POSTGRES_URL_NON_POOLING ??
   "postgresql://abhishekjha@localhost:5432/archive_csvs";
 
 const normalizedConnectionUrl = new URL(rawConnectionString);
